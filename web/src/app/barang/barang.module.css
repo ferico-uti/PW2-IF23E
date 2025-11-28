@@ -42,3 +42,10 @@
 .label {
     margin-bottom: 10px;
 }
+
+.error {
+    color: #ff0000;
+    font-size: 12px;
+    margin: 5px 0;
+}
+

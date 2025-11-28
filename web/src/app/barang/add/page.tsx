@@ -24,7 +24,7 @@ import {
   formatRibuan,
 } from "@/lib/scripts";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Info } from "lucide-react";
 import { useState } from "react";
 import styles from "../barang.module.css";
 import axios from "axios";
@@ -54,8 +54,44 @@ export default function AddBarangPage() {
   const [formHarga, setFormHarga] = useState("");
   const [formHargaRaw, setFormHargaRaw] = useState(0);
 
+  // buat state untuk cek error (jika ada salah komponen tidak diisi)
+  // bentuk state berupa objek
+  const [error, setError] = useState<{
+    kode: boolean;
+    nama: boolean;
+    harga: boolean;
+    satuan: boolean;
+  }>({
+    kode: false,
+    nama: false,
+    harga: false,
+    satuan: false,
+  });
+
   // buat fungsi untuk simpan data
   const saveData = async () => {
+    // buat object errorStatus untuk menampung kondisi error setiap komponen
+    const errorStatus = {
+      kode: formKode === "",
+      nama: formNama === "",
+      harga: formHarga === "",
+      satuan: value === "",
+    };
+
+    // update kondisi error setiap komponen
+    setError(errorStatus);
+
+    const hasError =
+      errorStatus.kode ||
+      errorStatus.nama ||
+      errorStatus.harga ||
+      errorStatus.satuan;
+
+    // jika ada salah satu komponen tidak diisi
+    if (hasError) {
+      return;
+    }
+
     // jika tidak error (seluruh komponen sudah diisi)
     //  simpan data
     try {
@@ -109,6 +145,11 @@ export default function AddBarangPage() {
               setFormKode(result);
             }}
           />
+
+          {/* tampilkan error jika kode barang belum diisi */}
+          {error.kode && (
+            <Label className={styles.error}><Info size={14}/> Kode Barang Harus Diisi !</Label>
+          )}
         </section>
 
         {/* area nama */}
@@ -129,6 +170,11 @@ export default function AddBarangPage() {
               setFormNama(result);
             }}
           />
+
+          {/* tampilkan error jika nama barang belum diisi */}
+          {error.nama && (
+            <Label className={styles.error}><Info size={14}/> Nama Barang Harus Diisi !</Label>
+          )}
         </section>
 
         {/* area harga */}
@@ -152,6 +198,11 @@ export default function AddBarangPage() {
               setFormHargaRaw(Number(resultRaw));
             }}
           />
+
+          {/* tampilkan error jika harga barang belum diisi */}
+          {error.harga && (
+            <Label className={styles.error}><Info size={14}/> Harga Barang Harus Diisi !</Label>
+          )}
         </section>
 
         {/* area satuan */}
@@ -206,6 +257,13 @@ export default function AddBarangPage() {
               </Command>
             </PopoverContent>
           </Popover>
+
+          {/* tampilkan error jika satuan barang belum dipilih */}
+          {error.satuan && (
+            <Label className={styles.error}>
+              <Info size={14}/> Satuan Barang Harus Dipilih !
+            </Label>
+          )}
         </section>
 
         {/* area tombol */}
