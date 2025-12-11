@@ -16,3 +16,4 @@
 
 - 27/11/2025 - Save Data.
 - 28/11/2025 - Error Handling (Save Data).
+- 11/12/2025 - Detail Data.
