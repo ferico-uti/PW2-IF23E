@@ -26,6 +26,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import useSWR from "swr";
 import styles from "../barang.module.css";
+import { API_BARANG } from "@/lib/strings";
+import { useRouter } from "next/navigation";
 
 // buat interface
 interface ModelBarang {
@@ -39,19 +41,22 @@ interface ModelBarang {
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ViewBarangPage() {
+  // buat hook router
+  const router = useRouter();
+
   //   buat variabel
   // const nama = "TEKNOKRAT";
   // const motto = "Sang Juara";
 
   const { data, error, isLoading, mutate } = useSWR(
-    "http://localhost:3001/api/barang",
+    API_BARANG,
     fetcher
   );
 
   // buat fungsi untuk hapus data
   const deleteData = async (id: number) => {
     const response = await axios.delete(
-      `http://localhost:3001/api/barang/${id}`
+      `${API_BARANG}/${id}`
     );
 
     // tampilkan hasil response
@@ -68,10 +73,10 @@ export default function ViewBarangPage() {
 
     mutate(data);
   };
- 
+
   return (
     <>
-      <title>View Data Barang</title>      
+      <title>View Data Barang</title>
 
       {/* tombol tambah */}
       <nav className="mt-2.5 mx-5 flex md:justify-end sm:justify-start justify-center">
@@ -107,11 +112,12 @@ export default function ViewBarangPage() {
               ) : (
                 data &&
                 data.barang.map((item: ModelBarang) => (
-                  
+
                   <TableRow key={item.id}>
                     <TableCell className="text-center">
                       {/* buat tombol edit */}
-                      <button className={styles.btn_edit}>
+                      <button className={styles.btn_edit} 
+                      onClick={() => router.push(`/barang/edit/${item.id}`)}>
                         <Pencil size={16} color="#a51c31" />
                       </button>
 

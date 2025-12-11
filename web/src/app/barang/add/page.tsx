@@ -29,6 +29,9 @@ import { useState } from "react";
 import styles from "../barang.module.css";
 import axios from "axios";
 import { toast } from "sonner";
+import { API_BARANG } from "@/lib/strings";
+import { useRouter } from "next/navigation";
+
 const satuan = [
   {
     value: "Unit",
@@ -45,6 +48,9 @@ const satuan = [
 ];
 
 export default function AddBarangPage() {
+  // buat variabel router (untuk navigasi halaman)
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
 
@@ -55,7 +61,7 @@ export default function AddBarangPage() {
   const [formHargaRaw, setFormHargaRaw] = useState(0);
 
   // buat state untuk cek error (jika ada salah komponen tidak diisi)
-  // bentuk state berupa objek
+  // bentuk state berupa objek  
   const [error, setError] = useState<{
     kode: boolean;
     nama: boolean;
@@ -95,7 +101,7 @@ export default function AddBarangPage() {
     // jika tidak error (seluruh komponen sudah diisi)
     //  simpan data
     try {
-      const response = await axios.post(`http://localhost:3001/api/barang`, {
+      const response = await axios.post(API_BARANG, {
         kode: formKode,
         nama: formNama,
         harga: formHargaRaw,
@@ -275,7 +281,7 @@ export default function AddBarangPage() {
           </Button>
           <Button
             variant="secondary"
-            className="rounded-full px-2.5 ml-1.5 w-[100px]">
+            className="rounded-full px-2.5 ml-1.5 w-[100px]" onClick={()=>router.back()}>
             Batal
           </Button>
         </section>

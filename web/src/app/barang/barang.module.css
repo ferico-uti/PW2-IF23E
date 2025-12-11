@@ -7,11 +7,13 @@
     display: flex;
     justify-content: center;
     /* align-items: center; */
+    z-index: 1;
 }
 
 .content {
     padding: 20px;
     line-height: 20px;
+    margin: 20px 0 50px 0;
 }
 
 .footer {
