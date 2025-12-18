@@ -1,5 +1,7 @@
 "use client";
 
+import CustomButtonPrimary from "@/components/custom/CustomButtonPrimary";
+import CustomButtonSecondary from "@/components/custom/CustomButtonSecondary";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -23,14 +25,13 @@ import {
   filterNama,
   formatRibuan,
 } from "@/lib/scripts";
+import { API_BARANG } from "@/lib/strings";
 import { cn } from "@/lib/utils";
+import axios from "axios";
 import { Check, ChevronsUpDown, Info } from "lucide-react";
 import { useState } from "react";
-import styles from "../barang.module.css";
-import axios from "axios";
 import { toast } from "sonner";
-import { API_BARANG } from "@/lib/strings";
-import { useRouter } from "next/navigation";
+import styles from "../barang.module.css";
 
 const satuan = [
   {
@@ -48,8 +49,6 @@ const satuan = [
 ];
 
 export default function AddBarangPage() {
-  // buat variabel router (untuk navigasi halaman)
-  const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
@@ -154,7 +153,7 @@ export default function AddBarangPage() {
 
           {/* tampilkan error jika kode barang belum diisi */}
           {error.kode && (
-            <Label className={styles.error}><Info size={14}/> Kode Barang Harus Diisi !</Label>
+            <Label className={styles.error}><Info size={14} /> Kode Barang Harus Diisi !</Label>
           )}
         </section>
 
@@ -179,7 +178,7 @@ export default function AddBarangPage() {
 
           {/* tampilkan error jika nama barang belum diisi */}
           {error.nama && (
-            <Label className={styles.error}><Info size={14}/> Nama Barang Harus Diisi !</Label>
+            <Label className={styles.error}><Info size={14} /> Nama Barang Harus Diisi !</Label>
           )}
         </section>
 
@@ -207,7 +206,7 @@ export default function AddBarangPage() {
 
           {/* tampilkan error jika harga barang belum diisi */}
           {error.harga && (
-            <Label className={styles.error}><Info size={14}/> Harga Barang Harus Diisi !</Label>
+            <Label className={styles.error}><Info size={14} /> Harga Barang Harus Diisi !</Label>
           )}
         </section>
 
@@ -225,7 +224,7 @@ export default function AddBarangPage() {
                 className="w-full justify-between">
                 {value
                   ? satuan.find((data_satuan) => data_satuan.value === value)
-                      ?.label
+                    ?.label
                   : "Pilih Satuan Barang"}
                 <ChevronsUpDown className="opacity-50" />
               </Button>
@@ -267,23 +266,22 @@ export default function AddBarangPage() {
           {/* tampilkan error jika satuan barang belum dipilih */}
           {error.satuan && (
             <Label className={styles.error}>
-              <Info size={14}/> Satuan Barang Harus Dipilih !
+              <Info size={14} /> Satuan Barang Harus Dipilih !
             </Label>
           )}
         </section>
 
         {/* area tombol */}
         <section className="flex sm:justify-start justify-center">
-          <Button
-            className="rounded-full px-2.5 mr-1.5 w-[100px]"
-            onClick={saveData}>
-            Simpan
-          </Button>
-          <Button
-            variant="secondary"
-            className="rounded-full px-2.5 ml-1.5 w-[100px]" onClick={()=>router.back()}>
-            Batal
-          </Button>
+          {/* panggil reusable component ButtonPrimary 
+              (components/custom/CustomButtonPrimary.tsx)
+          */}
+          <CustomButtonPrimary label="Simpan" onClick={saveData} />
+
+          {/* panggil reusable component ButtonSecondary 
+              (components/custom/CustomButtonSecondary.tsx)
+          */}
+          <CustomButtonSecondary label="Batal" />
         </section>
       </article>
     </>

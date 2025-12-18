@@ -1,8 +1,5 @@
 "use client";
 
-import { useParams, useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import styles from "../../barang.module.css";
 import { Button } from "@/components/ui/button";
 import {
     Command,
@@ -19,8 +16,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Check, ChevronsUpDown, Info } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
     filterHarga,
     filterHargaRaw,
@@ -30,7 +25,16 @@ import {
     formatRupiah,
 } from "@/lib/scripts";
 import { API_BARANG } from '@/lib/strings';
+import { cn } from "@/lib/utils";
+import axios from 'axios';
+import { Check, ChevronsUpDown, Info } from "lucide-react";
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import useSWR from 'swr';
+import styles from "../../barang.module.css";
+import CustomButtonPrimary from "@/components/custom/CustomButtonPrimary";
+import CustomButtonSecondary from "@/components/custom/CustomButtonSecondary";
 
 const satuan = [
     {
@@ -63,7 +67,7 @@ export default function EditBarangPage() {
 
     // buat state untuk cek error (jika ada salah komponen tidak diisi)
     // bentuk state berupa objek  
-    const [error, setError] = useState<{
+    const [errorForm, setErrorForm] = useState<{
         kode: boolean;
         nama: boolean;
         harga: boolean;
@@ -82,19 +86,18 @@ export default function EditBarangPage() {
     const router = useRouter();
 
     // panggil service detail barang sesuai slug (id)
-    const { data } = useSWR(
-        `${API_BARANG}/${slug}`,
+    const { data, error, isLoading } = useSWR(
+        slug ? `${API_BARANG}/${slug}` : null,
         fetcher
     );
 
     // tampilkan detail data ke dalam komponen
     useEffect(() => {
-        // jika data tidak ditemukan
-        if (!data) return;
+        // saat loading
+        if (isLoading) return;
 
-        // jika data barang tidak ditemukan
-        if (!data.barang) {
-            // alihkan ke halaman 404
+        // jika request error atau data barang tidak ditemukan
+        if (error || !data?.barang) {
             router.replace("/404");
             return;
         }
@@ -109,7 +112,54 @@ export default function EditBarangPage() {
         setFormHargaRaw(barang.harga ?? 0);
         setValue(barang.satuan);
 
-    }, [data, router])
+    }, [data, error, isLoading, router]);
+
+    // buat fungsi untuk edit data
+    const editData = async () => {
+        // buat object errorStatus untuk menampung kondisi error setiap komponen
+        const errorStatus = {
+            kode: formKode === "",
+            nama: formNama === "",
+            harga: formHarga === "",
+            satuan: value === "",
+        };
+
+        // update kondisi error setiap komponen
+        setErrorForm(errorStatus);
+
+        const hasError =
+            errorStatus.kode ||
+            errorStatus.nama ||
+            errorStatus.harga ||
+            errorStatus.satuan;
+
+        // jika ada salah satu komponen tidak diisi
+        if (hasError) {
+            return;
+        }
+
+        // jika tidak error (seluruh komponen sudah diisi)
+        //  ubah data
+        try {
+            const response = await axios.put(`${API_BARANG}/${slug}`, {
+                kode: formKode,
+                nama: formNama,
+                harga: formHargaRaw,
+                satuan: value,
+            });
+            // jika success == true
+            if (response.data.success) {
+                toast.success(response.data.message);
+
+            }
+            // jika success == false
+            else {
+                toast.error(response.data.message);
+            }
+        } catch {
+            toast.error(`Gagal Kirim Data !`);
+        }
+    }
 
 
     return (
@@ -138,7 +188,7 @@ export default function EditBarangPage() {
                     />
 
                     {/* tampilkan error jika kode barang belum diisi */}
-                    {error.kode && (
+                    {errorForm.kode && (
                         <Label className={styles.error}><Info size={14} /> Kode Barang Harus Diisi !</Label>
                     )}
                 </section>
@@ -163,7 +213,7 @@ export default function EditBarangPage() {
                     />
 
                     {/* tampilkan error jika nama barang belum diisi */}
-                    {error.nama && (
+                    {errorForm.nama && (
                         <Label className={styles.error}><Info size={14} /> Nama Barang Harus Diisi !</Label>
                     )}
                 </section>
@@ -191,7 +241,7 @@ export default function EditBarangPage() {
                     />
 
                     {/* tampilkan error jika harga barang belum diisi */}
-                    {error.harga && (
+                    {errorForm.harga && (
                         <Label className={styles.error}><Info size={14} /> Harga Barang Harus Diisi !</Label>
                     )}
                 </section>
@@ -250,7 +300,7 @@ export default function EditBarangPage() {
                     </Popover>
 
                     {/* tampilkan error jika satuan barang belum dipilih */}
-                    {error.satuan && (
+                    {errorForm.satuan && (
                         <Label className={styles.error}>
                             <Info size={14} /> Satuan Barang Harus Dipilih !
                         </Label>
@@ -259,15 +309,18 @@ export default function EditBarangPage() {
 
                 {/* area tombol */}
                 <section className="flex sm:justify-start justify-center">
-                    <Button
-                        className="rounded-full px-2.5 mr-1.5 w-[100px]">
-                        Ubah
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className="rounded-full px-2.5 ml-1.5 w-[100px]" onClick={() => router.back()}>
-                        Batal
-                    </Button>
+                    {/* area tombol */}
+                    <section className="flex sm:justify-start justify-center">
+                        {/* panggil reusable component ButtonPrimary 
+                            (components/custom/CustomButtonPrimary.tsx)
+                        */}
+                        <CustomButtonPrimary label="Ubah" onClick={editData} />
+
+                        {/* panggil reusable component ButtonSecondary 
+                            (components/custom/CustomButtonSecondary.tsx)
+                        */}
+                        <CustomButtonSecondary label="Batal" />
+                    </section>
                 </section>
             </article>
         </>

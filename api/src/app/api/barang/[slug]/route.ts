@@ -64,7 +64,7 @@ export const PUT = async (
   if (check) {
     // tampilkan respon
     return NextResponse.json({
-      message: "Data Barang Gagal Diubah ! (Kode Tidak Ada !)",
+      message: "Data Barang Gagal Diubah ! (Kode Sudah Dipakai !)",
       success: false,
     });
   }

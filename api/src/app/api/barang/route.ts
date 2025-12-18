@@ -55,7 +55,7 @@ export const POST = async (request: NextRequest) => {
     if (check) {
         // tampilkan respon
         return NextResponse.json({
-            message: "Data Barang Gagal Disimpan ! (Kode Sudah Ada !)",
+            message: "Data Barang Gagal Disimpan ! (Kode Sudah Dipakai !)",
             success: false
         })
     }
