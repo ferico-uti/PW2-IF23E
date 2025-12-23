@@ -10,7 +10,7 @@ export const filterKode = (value: string) => {
 
 // buat fungsi regex untuk nama barang
 export const filterNama = (value: string) => {
-  return value.replace(/[^A-Za-z0-9 -.,'"]/g, "");
+  return value.replace(/[^A-Za-z0-9-.,'" ]/g, "");
 };
 
 // buat fungsi regex untuk harga barang
