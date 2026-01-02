@@ -18,3 +18,4 @@
 - 28/11/2025 - Error Handling (Save Data).
 - 11/12/2025 - Detail Data.
 - 18/12/2025 - Reusable Component (Button).
+- 02/01/2026 - PDF Export.

@@ -26,7 +26,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import useSWR from "swr";
 import styles from "../barang.module.css";
-import { API_BARANG } from "@/lib/strings";
+import { API_BARANG, API_LAPORAN_BARANG } from "@/lib/strings";
 import { useRouter } from "next/navigation";
 
 // buat interface
@@ -84,6 +84,13 @@ export default function ViewBarangPage() {
           href="/barang/add"
           className="sm:bg-sky-700 bg-rose-700 py-2.5 px-5 rounded-full text-white">
           Tambah Data
+        </Link>
+
+        <Link
+          href={`${API_LAPORAN_BARANG}`}
+          target="_blank"
+          className="sm:bg-rose-700 bg-cyan-700 px-8 py-2 text-white rounded-full ml-1.5">
+          Ekspor PDF
         </Link>
       </nav>
 
